@@ -32,8 +32,13 @@ dependencyManagement {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'com.jn:jn-core-common:2021.2.0-SNAPSHOT'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
