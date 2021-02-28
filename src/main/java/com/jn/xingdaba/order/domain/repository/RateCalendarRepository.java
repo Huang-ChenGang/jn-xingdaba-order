@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface RateCalendarRepository extends JpaRepository<RateCalendar, String>, JpaSpecificationExecutor<RateCalendar> {
-    List<RateCalendar> findByUseDate(LocalDate useDate);
+    List<RateCalendar> findByUseDateBetween(LocalDate beginDate, LocalDate endDate);
 }

@@ -5,6 +5,7 @@ import com.jn.xingdaba.order.api.RateCalendarMonthResponseData;
 import com.jn.xingdaba.order.api.RateCalendarMonthRowResponseData;
 import com.jn.xingdaba.order.api.RateCalendarResponseData;
 import com.jn.xingdaba.order.application.dto.RateCalendarDto;
+import com.jn.xingdaba.order.domain.model.RateCalendar;
 import com.jn.xingdaba.order.domain.service.RateCalendarDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class RateCalendarServiceImpl implements RateCalendarService {
 
         // 获取当前年份和月份
         LocalDate currentDate = LocalDate.now();
+        LocalDate firstday = currentDate.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDay = currentDate.plusMonths(MONTH_COUNT).with(TemporalAdjusters.lastDayOfMonth());
+        List<RateCalendar> allRateCalender = domainService.findByUseDateBetween(firstday, lastDay);
 
         for (int monthIdx = 0; monthIdx < MONTH_COUNT; monthIdx++) {
             currentDate = currentDate.plusMonths(monthIdx);
@@ -68,7 +72,8 @@ public class RateCalendarServiceImpl implements RateCalendarService {
 
                     // 获取每日价格系数列表
                     dayInfo.setRateCalendarList(
-                            domainService.findByUseDate(dayInfo.getDateVal()).stream()
+                            allRateCalender.stream()
+                                    .filter(r -> r.getUseDate().isEqual(dayInfo.getDateVal()))
                                     .map(RateCalendarDto::fromModel)
                                     .map(RateCalendarResponseData::fromDto)
                                     .collect(Collectors.toList()));

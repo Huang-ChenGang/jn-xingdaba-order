@@ -6,5 +6,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RateCalendarDomainService {
-    List<RateCalendar> findByUseDate(LocalDate useDate);
+    List<RateCalendar> findByUseDateBetween(LocalDate beginDate, LocalDate endDate);
 }
