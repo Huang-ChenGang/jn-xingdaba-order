@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public final class RateCalendarDayResponseData {
@@ -26,4 +27,6 @@ public final class RateCalendarDayResponseData {
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private LocalDate dateVal;
+
+    private List<RateCalendarResponseData> rateCalendarList;
 }

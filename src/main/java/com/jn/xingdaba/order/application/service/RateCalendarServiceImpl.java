@@ -3,6 +3,9 @@ package com.jn.xingdaba.order.application.service;
 import com.jn.xingdaba.order.api.RateCalendarDayResponseData;
 import com.jn.xingdaba.order.api.RateCalendarMonthResponseData;
 import com.jn.xingdaba.order.api.RateCalendarMonthRowResponseData;
+import com.jn.xingdaba.order.api.RateCalendarResponseData;
+import com.jn.xingdaba.order.application.dto.RateCalendarDto;
+import com.jn.xingdaba.order.domain.service.RateCalendarDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +13,17 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class RateCalendarServiceImpl implements RateCalendarService {
+    private final RateCalendarDomainService domainService;
+
+    public RateCalendarServiceImpl(RateCalendarDomainService domainService) {
+        this.domainService = domainService;
+    }
+
     @Override
     public List<RateCalendarMonthResponseData> init() {
         List<RateCalendarMonthResponseData> monthList = new ArrayList<>();
@@ -56,7 +66,12 @@ public class RateCalendarServiceImpl implements RateCalendarService {
                     dayInfo.setDateVal(LocalDate.of(currentYear, currentMonth, d));
                     dayInfo.setWeekIntVal(dayInfo.getDateVal().getDayOfWeek().getValue());
 
-                    // TODO 获取每日价格系数列表
+                    // 获取每日价格系数列表
+                    dayInfo.setRateCalendarList(
+                            domainService.findByUseDate(dayInfo.getDateVal()).stream()
+                                    .map(RateCalendarDto::fromModel)
+                                    .map(RateCalendarResponseData::fromDto)
+                                    .collect(Collectors.toList()));
                 }
 
                 dayList.add(dayInfo);
