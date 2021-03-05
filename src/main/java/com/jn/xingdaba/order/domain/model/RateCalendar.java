@@ -27,7 +27,7 @@ public final class RateCalendar {
 
     private BigDecimal provinceRatio;
 
-    private BigDecimal isLack;
+    private String isLack;
 
     private String isDelete;
 

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface RateCalendarDomainService {
     List<RateCalendar> findByUseDateBetween(LocalDate beginDate, LocalDate endDate);
+
+    void saveAll(List<RateCalendar> rateCalendarList);
 }

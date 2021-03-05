@@ -21,4 +21,9 @@ public class RateCalendarDomainServiceImpl implements RateCalendarDomainService 
     public List<RateCalendar> findByUseDateBetween(LocalDate beginDate, LocalDate endDate) {
         return repository.findByUseDateBetween(beginDate, endDate);
     }
+
+    @Override
+    public void saveAll(List<RateCalendar> rateCalendarList) {
+        repository.saveAll(rateCalendarList);
+    }
 }
