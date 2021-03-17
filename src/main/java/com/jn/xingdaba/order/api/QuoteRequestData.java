@@ -1,0 +1,55 @@
+package com.jn.xingdaba.order.api;
+
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
+@Data
+public final class QuoteRequestData {
+    /** 订单ID **/
+    private String orderId;
+
+    /** 客户ID */
+    @NotBlank(message = "客户ID不能为空")
+    private String customerId;
+
+    /** 报价天数信息 */
+    @NotEmpty(message = "报价天数不能为空")
+    private List<QuoteDayRequestData> quoteDayList;
+
+    /** 车型信息 */
+    @NotEmpty(message = "车型信息不能为空")
+    private List<QuoteBusTypeRequestData> busTypeList;
+
+    /** 订单类型 **/
+    @NotEmpty(message = "订单类型不能为空")
+    private String orderType;
+
+    /** 接送类型 **/
+    private String shuttleType;
+
+    /** 接送班次号 **/
+    private String shuttleNo;
+
+    /** 乘车人数 **/
+    private Integer personNum;
+
+    /** 包车用途 **/
+    private String orderUse;
+
+    /** 车价包含 **/
+    private String orderContain;
+
+    /** 联系人 **/
+    @NotBlank(message = "联系人不能为空")
+    private String contactPerson;
+
+    /** 联系电话 **/
+    @NotBlank(message = "联系电话不能为空")
+    private String contactPhone;
+
+    /** 订单备注 **/
+    private String orderRemark;
+}
