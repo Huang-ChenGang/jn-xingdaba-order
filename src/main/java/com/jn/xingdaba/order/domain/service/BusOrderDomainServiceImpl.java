@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class BusOrderDomainServiceImpl implements BusOrderDomainService {
@@ -34,5 +36,10 @@ public class BusOrderDomainServiceImpl implements BusOrderDomainService {
         }
 
         return repository.save(model).getId();
+    }
+
+    @Override
+    public List<BusOrder> findByOrderId(String orderId) {
+        return repository.findByOrderId(orderId);
     }
 }

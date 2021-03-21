@@ -1,6 +1,9 @@
-package com.jn.xingdaba.order.application.dto;
+package com.jn.xingdaba.order.infrastructure.dictionary;
 
 import lombok.Getter;
+
+import javax.validation.constraints.NotBlank;
+import java.util.stream.Stream;
 
 @Getter
 public enum OrderState {
@@ -20,6 +23,12 @@ public enum OrderState {
     OrderState(String code, String value) {
         this.code = code;
         this.value = value;
+    }
+
+    public static OrderState findByCode(@NotBlank String code) {
+        return Stream.of(values())
+                .filter(o -> code.equals(o.getCode()))
+                .findFirst().orElseThrow(IllegalArgumentException::new);
     }
 
 }
