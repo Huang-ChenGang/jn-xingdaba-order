@@ -8,7 +8,6 @@ spring:
       discovery:
         service-id: xingdaba-config
         enabled: true
-      profile: dev
 eureka:
   client:
     service-url:
