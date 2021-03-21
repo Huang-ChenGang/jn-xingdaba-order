@@ -7,8 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RateCalendarRepository extends JpaRepository<RateCalendar, String>, JpaSpecificationExecutor<RateCalendar> {
     List<RateCalendar> findByUseDateBetween(LocalDate beginDate, LocalDate endDate);
+
+    Optional<RateCalendar> findByBusTypeIdAndUseDate(String busTypeId, LocalDate useDate);
 }

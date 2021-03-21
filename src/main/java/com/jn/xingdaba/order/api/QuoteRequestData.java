@@ -1,6 +1,8 @@
 package com.jn.xingdaba.order.api;
 
+import com.jn.xingdaba.order.domain.model.OrderInfo;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -9,7 +11,7 @@ import java.util.List;
 @Data
 public final class QuoteRequestData {
     /** 订单ID **/
-    private String orderId;
+    private String id;
 
     /** 客户ID */
     @NotBlank(message = "客户ID不能为空")
@@ -52,4 +54,10 @@ public final class QuoteRequestData {
 
     /** 订单备注 **/
     private String orderRemark;
+
+    public static OrderInfo toModel(QuoteRequestData requestData) {
+        OrderInfo model = new OrderInfo();
+        BeanUtils.copyProperties(requestData, model);
+        return model;
+    }
 }

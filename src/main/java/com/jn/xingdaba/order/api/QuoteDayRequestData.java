@@ -1,7 +1,9 @@
 package com.jn.xingdaba.order.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.jn.xingdaba.order.domain.model.DayOrder;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
@@ -39,4 +41,10 @@ public final class QuoteDayRequestData {
      */
     @NotEmpty(message = "请选择是否过夜")
     private String isPassNight;
+
+    public static DayOrder toModel(QuoteDayRequestData quoteDay) {
+        DayOrder model = new DayOrder();
+        BeanUtils.copyProperties(quoteDay, model);
+        return model;
+    }
 }

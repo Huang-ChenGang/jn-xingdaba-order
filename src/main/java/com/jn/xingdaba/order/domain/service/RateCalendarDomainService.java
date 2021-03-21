@@ -9,4 +9,6 @@ public interface RateCalendarDomainService {
     List<RateCalendar> findByUseDateBetween(LocalDate beginDate, LocalDate endDate);
 
     void saveAll(List<RateCalendar> rateCalendarList);
+
+    RateCalendar findByBusTypeIdAndUseDate(String busTypeId, LocalDate useDate);
 }

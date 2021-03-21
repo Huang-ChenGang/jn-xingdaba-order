@@ -1,6 +1,8 @@
 package com.jn.xingdaba.order.api;
 
+import com.jn.xingdaba.order.domain.model.DayWayPoint;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
 
@@ -21,4 +23,10 @@ public final class QuoteWayPointRequestData {
     /** 途经点详细地址 */
     @NotBlank(message = "途经点详细地址不能为空")
     private String pointAddress;
+
+    public static DayWayPoint toModel(QuoteWayPointRequestData requestData) {
+        DayWayPoint model = new DayWayPoint();
+        BeanUtils.copyProperties(requestData, model);
+        return model;
+    }
 }

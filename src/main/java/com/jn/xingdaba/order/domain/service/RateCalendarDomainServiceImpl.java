@@ -2,6 +2,7 @@ package com.jn.xingdaba.order.domain.service;
 
 import com.jn.xingdaba.order.domain.model.RateCalendar;
 import com.jn.xingdaba.order.domain.repository.RateCalendarRepository;
+import com.jn.xingdaba.order.infrastructure.exception.RateCalendarNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +26,10 @@ public class RateCalendarDomainServiceImpl implements RateCalendarDomainService 
     @Override
     public void saveAll(List<RateCalendar> rateCalendarList) {
         repository.saveAll(rateCalendarList);
+    }
+
+    @Override
+    public RateCalendar findByBusTypeIdAndUseDate(String busTypeId, LocalDate useDate) {
+        return repository.findByBusTypeIdAndUseDate(busTypeId, useDate).orElseThrow(RateCalendarNotFoundException::new);
     }
 }
