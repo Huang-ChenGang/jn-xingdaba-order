@@ -51,7 +51,7 @@ public class OrderExceptionHandler extends ResponseEntityExceptionHandler {
             IllegalArgumentException.class
     })
     public ServerResponse<Void> handleSystemError(RuntimeException exception) {
-        log.error("universal system error", exception);
+        log.error("order system error", exception);
         return ServerResponse.error(ORDER_SYSTEM_ERROR);
     }
 }

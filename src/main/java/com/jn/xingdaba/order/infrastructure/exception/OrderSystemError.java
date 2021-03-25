@@ -10,7 +10,8 @@ public enum OrderSystemError implements OrderError {
     ORDER_SETTINGS_NOT_FOUND(1200, "订单设置信息未定义"),
     ORDER_NOT_FOUND(1300, "订单不存在"),
     ORDER_TYPE_ERROR(1400, "订单类型错误"),
-    QUOTE_ERROR(1500, "报价异常")
+    QUOTE_ERROR(1500, "报价异常"),
+    HANDLE_PAY_SUCCESS_ERROR(1600, "处理支付成功消息异常")
     ;
 
     private final int errorCode;
