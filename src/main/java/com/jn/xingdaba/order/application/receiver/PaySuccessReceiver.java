@@ -43,8 +43,7 @@ public class PaySuccessReceiver {
             throw new OrderException(HANDLE_PAY_SUCCESS_ERROR, e.getMessage());
         }
 
-        OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setId(paySuccessMessage.getOrderId());
+        OrderInfo orderInfo = service.findById(paySuccessMessage.getOrderId());
         orderInfo.setOrderState(OrderState.RESERVED.getCode());
         orderInfo.setPayState(PayState.PAID.getCode());
         orderInfo.setActualPaymentAmount(paySuccessMessage.getRealAmount());
