@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,5 +43,13 @@ public class BusOrderDomainServiceImpl implements BusOrderDomainService {
     @Override
     public List<BusOrder> findByOrderId(String orderId) {
         return repository.findByOrderId(orderId);
+    }
+
+    @Override
+    public List<String> findBusTypeIdListByOrderIdIn(List<String> orderIds) {
+        return new ArrayList<>(repository.findAllByOrderIdIn(orderIds).stream()
+                .collect(Collectors.toMap(BusOrder::getOrderId, BusOrder::getBusTypeId, (oldValue, newValue) -> oldValue))
+                .values())
+                ;
     }
 }

@@ -10,4 +10,6 @@ public interface BusOrderDomainService {
     String save(BusOrder model);
 
     List<BusOrder> findByOrderId(String orderId);
+
+    List<String> findBusTypeIdListByOrderIdIn(List<String> orderIds);
 }

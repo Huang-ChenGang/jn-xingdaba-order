@@ -1,10 +1,15 @@
 package com.jn.xingdaba.order.domain.service;
 
 import com.jn.core.builder.KeyBuilder;
+import com.jn.xingdaba.order.application.dto.WechatAppletOrderRequestDto;
 import com.jn.xingdaba.order.domain.model.OrderInfo;
+import com.jn.xingdaba.order.domain.model.query.WechatAppletOrderSpecification;
 import com.jn.xingdaba.order.domain.repository.OrderInfoRepository;
 import com.jn.xingdaba.order.infrastructure.exception.OrderNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -46,5 +51,11 @@ public class OrderInfoDomainServiceImpl implements OrderInfoDomainService {
     @Override
     public OrderInfo findById(String id) {
         return repository.findById(id).orElseThrow(OrderNotFoundException::new);
+    }
+
+    @Override
+    public Page<OrderInfo> findAll(WechatAppletOrderRequestDto requestDto, Pageable pageable) {
+        Specification<OrderInfo> specification = WechatAppletOrderSpecification.fromRequestData(requestDto);
+        return repository.findAll(specification, pageable);
     }
 }

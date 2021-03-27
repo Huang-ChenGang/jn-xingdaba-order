@@ -11,7 +11,8 @@ public enum OrderSystemError implements OrderError {
     ORDER_NOT_FOUND(1300, "订单不存在"),
     ORDER_TYPE_ERROR(1400, "订单类型错误"),
     QUOTE_ERROR(1500, "报价异常"),
-    HANDLE_PAY_SUCCESS_ERROR(1600, "处理支付成功消息异常")
+    HANDLE_PAY_SUCCESS_ERROR(1600, "处理支付成功消息异常"),
+    GET_BUS_TYPE_ERROR(1700, "获取车型信息失败")
     ;
 
     private final int errorCode;

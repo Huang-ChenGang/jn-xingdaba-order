@@ -10,4 +10,6 @@ public interface BusOrderRepository extends JpaRepository<BusOrder, String>, Jpa
     void deleteByOrderId(String orderId);
 
     List<BusOrder> findByOrderId(String orderId);
+
+    List<BusOrder> findAllByOrderIdIn(List<String> orderIds);
 }
