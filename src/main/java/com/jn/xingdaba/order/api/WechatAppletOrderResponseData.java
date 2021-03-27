@@ -4,6 +4,7 @@ import com.jn.xingdaba.order.application.dto.OrderInfoDto;
 import com.jn.xingdaba.order.infrastructure.dictionary.WechatAppletOrderState;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -56,8 +57,10 @@ public final class WechatAppletOrderResponseData {
         BeanUtils.copyProperties(dto, responseData);
 
         responseData.setUseTimeRange(DateTimeFormatter.ofPattern("MM月dd日").format(dto.getTripBeginTime()).concat("-")
-                .concat(DateTimeFormatter.ofPattern("MM月dd日").format(dto.getTripEndTime()))
-                .concat("(").concat(dto.getTripTotalTime()).concat(")"));
+                .concat(DateTimeFormatter.ofPattern("MM月dd日").format(dto.getTripEndTime())));
+        if (StringUtils.hasText(dto.getTripTotalTime())) {
+            responseData.setUseTimeRange(responseData.getUseTimeRange().concat("(").concat(dto.getTripTotalTime()).concat(")"));
+        }
 
         responseData.setBeginLocation(DateTimeFormatter.ofPattern("HH:mm").format(dto.getTripBeginTime()).concat(" ").concat(dto.getBeginLocation()));
         responseData.setEndLocation(DateTimeFormatter.ofPattern("HH:mm").format(dto.getTripEndTime()).concat(" ").concat(dto.getEndLocation()));
