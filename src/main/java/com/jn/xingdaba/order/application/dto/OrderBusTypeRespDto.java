@@ -1,5 +1,6 @@
 package com.jn.xingdaba.order.application.dto;
 
+import com.jn.xingdaba.order.api.QuoteBusTypeRequestData;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,4 +15,12 @@ public final class OrderBusTypeRespDto {
 
     /** 数量 **/
     private BigDecimal quantity;
+
+    public static QuoteBusTypeRequestData toQuoteRequest(OrderBusTypeRespDto dto) {
+        QuoteBusTypeRequestData requestData = new QuoteBusTypeRequestData();
+        requestData.setBusTypeId(dto.getBusTypeId());
+        requestData.setBusTypeName(dto.getBusTypeName());
+        requestData.setBusQuantity(dto.getQuantity().intValue());
+        return requestData;
+    }
 }

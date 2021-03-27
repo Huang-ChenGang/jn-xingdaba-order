@@ -49,4 +49,9 @@ public class OrderController {
         return ServerResponse.success(JnPageResponse.of(pageableResponse));
     }
 
+    @GetMapping("/quote-parameters/{orderId}")
+    public ServerResponse<QuoteRequestData> getQuoteParameter(@PathVariable @NotBlank String orderId) {
+        return ServerResponse.success(orderInfoService.getQuoteParameter(orderId));
+    }
+
 }

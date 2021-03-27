@@ -1,5 +1,6 @@
 package com.jn.xingdaba.order.application.dto;
 
+import com.jn.xingdaba.order.api.QuoteRequestData;
 import com.jn.xingdaba.order.domain.model.OrderInfo;
 import com.jn.xingdaba.order.infrastructure.dictionary.OrderState;
 import com.jn.xingdaba.order.infrastructure.dictionary.OrderType;
@@ -254,5 +255,11 @@ public class OrderInfoDto {
         dto.setPayStateText(PayState.findByCode(dto.getPayState()).getValue());
 
         return dto;
+    }
+
+    public static QuoteRequestData toQuoteRequestData(OrderInfoDto dto) {
+        QuoteRequestData requestData = new QuoteRequestData();
+        BeanUtils.copyProperties(dto, requestData);
+        return requestData;
     }
 }

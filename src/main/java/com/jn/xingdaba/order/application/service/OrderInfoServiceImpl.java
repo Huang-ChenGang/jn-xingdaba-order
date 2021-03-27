@@ -4,14 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jn.core.api.ServerResponse;
+import com.jn.xingdaba.order.api.QuoteDayRequestData;
+import com.jn.xingdaba.order.api.QuoteRequestData;
 import com.jn.xingdaba.order.api.QuoteResultResponseData;
 import com.jn.xingdaba.order.api.QuoteResultResponseData.QuoteBus;
 import com.jn.xingdaba.order.api.WechatAppletOrderResponseData;
-import com.jn.xingdaba.order.application.dto.OrderBusTypeRespDto;
-import com.jn.xingdaba.order.application.dto.OrderInfoDto;
-import com.jn.xingdaba.order.application.dto.WechatAppletOrderRequestDto;
+import com.jn.xingdaba.order.application.dto.*;
 import com.jn.xingdaba.order.domain.model.BusOrder;
+import com.jn.xingdaba.order.domain.model.DayOrder;
 import com.jn.xingdaba.order.domain.service.BusOrderDomainService;
+import com.jn.xingdaba.order.domain.service.DayOrderDomainService;
+import com.jn.xingdaba.order.domain.service.DayWayPointDomainService;
 import com.jn.xingdaba.order.domain.service.OrderInfoDomainService;
 import com.jn.xingdaba.order.infrastructure.exception.OrderException;
 import com.jn.xingdaba.order.infrastructure.exception.OrderNotFoundException;
@@ -39,15 +42,21 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     private final BusOrderDomainService busOrderDomainService;
     private final RestTemplate jnRestTemplate;
     private final ObjectMapper objectMapper;
+    private final DayOrderDomainService dayOrderDomainService;
+    private final DayWayPointDomainService dayWayPointDomainService;
 
     public OrderInfoServiceImpl(OrderInfoDomainService orderInfoDomainService,
                                 BusOrderDomainService busOrderDomainService,
                                 RestTemplate jnRestTemplate,
-                                ObjectMapper objectMapper) {
+                                ObjectMapper objectMapper,
+                                DayOrderDomainService dayOrderDomainService,
+                                DayWayPointDomainService dayWayPointDomainService) {
         this.orderInfoDomainService = orderInfoDomainService;
         this.busOrderDomainService = busOrderDomainService;
         this.jnRestTemplate = jnRestTemplate;
         this.objectMapper = objectMapper;
+        this.dayOrderDomainService = dayOrderDomainService;
+        this.dayWayPointDomainService = dayWayPointDomainService;
     }
 
     @Override
@@ -125,6 +134,30 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         });
 
         return responseDataPage;
+    }
+
+    @Override
+    public QuoteRequestData getQuoteParameter(String orderId) {
+        QuoteRequestData requestData = OrderInfoDto.toQuoteRequestData(
+                OrderInfoDto.fromModel(orderInfoDomainService.findById(orderId)));
+
+        List<DayOrder> dayOrderList = dayOrderDomainService.findByOrderId(orderId);
+        List<QuoteDayRequestData> quoteDayList = new ArrayList<>();
+        dayOrderList.forEach(dayOrder -> {
+            QuoteDayRequestData quoteDay = DayOrderDto.toQuoteDay(DayOrderDto.fromModel(dayOrder));
+            quoteDay.setWayPointList(dayWayPointDomainService.findByDayOrderId(dayOrder.getId()).stream()
+                    .map(DayWayPointDto::fromModel)
+                    .map(DayWayPointDto::toQuoteRequest)
+                    .collect(Collectors.toList()));
+            quoteDayList.add(quoteDay);
+        });
+        requestData.setQuoteDayList(quoteDayList);
+
+        requestData.setBusTypeList(sumOrderBusType(orderId).stream()
+                .map(OrderBusTypeRespDto::toQuoteRequest)
+                .collect(Collectors.toList()));
+
+        return requestData;
     }
 
     private List<OrderBusTypeRespDto> sumOrderBusType(@NotBlank String orderId) {
