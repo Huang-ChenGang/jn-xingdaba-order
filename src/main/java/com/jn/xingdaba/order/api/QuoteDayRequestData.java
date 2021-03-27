@@ -45,6 +45,8 @@ public final class QuoteDayRequestData {
     public static DayOrder toModel(QuoteDayRequestData quoteDay) {
         DayOrder model = new DayOrder();
         BeanUtils.copyProperties(quoteDay, model);
+        model.setBeginTime(quoteDay.getDayBeginTime());
+        model.setEndTime(quoteDay.getDayEndTime());
         return model;
     }
 }
