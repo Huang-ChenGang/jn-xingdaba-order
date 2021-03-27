@@ -4,14 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jn.core.api.ServerResponse;
-import com.jn.xingdaba.order.api.QuoteDayRequestData;
-import com.jn.xingdaba.order.api.QuoteRequestData;
-import com.jn.xingdaba.order.api.QuoteResultResponseData;
+import com.jn.xingdaba.order.api.*;
 import com.jn.xingdaba.order.api.QuoteResultResponseData.QuoteBus;
-import com.jn.xingdaba.order.api.WechatAppletOrderResponseData;
 import com.jn.xingdaba.order.application.dto.*;
 import com.jn.xingdaba.order.domain.model.BusOrder;
 import com.jn.xingdaba.order.domain.model.DayOrder;
+import com.jn.xingdaba.order.domain.model.DayWayPoint;
 import com.jn.xingdaba.order.domain.service.BusOrderDomainService;
 import com.jn.xingdaba.order.domain.service.DayOrderDomainService;
 import com.jn.xingdaba.order.domain.service.DayWayPointDomainService;
@@ -30,8 +28,11 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.jn.xingdaba.order.infrastructure.exception.OrderSystemError.GET_BUS_TYPE_ERROR;
 
@@ -158,6 +159,49 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 .collect(Collectors.toList()));
 
         return requestData;
+    }
+
+    @Override
+    public WechatAppletOrderDetailResponseData getWechatDetail(String orderId) {
+        OrderInfoDto orderInfoDto = OrderInfoDto.fromModel(orderInfoDomainService.findById(orderId));
+        WechatAppletOrderDetailResponseData responseData = WechatAppletOrderDetailResponseData.fromDto(orderInfoDto);
+
+        List<DayOrder> dayOrderList = dayOrderDomainService.findByOrderId(orderId);
+        List<WechatAppletOrderDetailDayResponseData> responseDayOrderList = dayOrderList.stream().map(d -> {
+            WechatAppletOrderDetailDayResponseData responseDayOrder = new WechatAppletOrderDetailDayResponseData();
+
+            List<DayWayPoint> wayPointDbList = dayWayPointDomainService.findByDayOrderId(d.getId());
+            List<WechatAppletOrderDetailWayPointResponseData> wayPointList = new ArrayList<>();
+            Stream.iterate(0, i -> i + 1).limit(wayPointDbList.size()).forEach(i -> {
+                WechatAppletOrderDetailWayPointResponseData responseWayPoint = new WechatAppletOrderDetailWayPointResponseData();
+                if (i == 0) {
+                    responseWayPoint.setTime(DateTimeFormatter.ofPattern("HH:mm").format(d.getBeginTime()));
+                } else if (i == wayPointDbList.size() - 1) {
+                    responseWayPoint.setTime(DateTimeFormatter.ofPattern("HH:mm").format(d.getEndTime()));
+                } else {
+                    responseWayPoint.setTime("途径");
+                }
+                responseWayPoint.setLocation(wayPointDbList.get(i).getPointName());
+                wayPointList.add(responseWayPoint);
+            });
+            responseDayOrder.setWayPointList(wayPointList);
+
+            return responseDayOrder;
+        }).collect(Collectors.toList());
+        responseData.setDayOrderList(responseDayOrderList);
+
+        List<BusOrder> busOrderList = busOrderDomainService.findByOrderId(orderId);
+        List<WechatAppletOrderDetailBusTypeResponseData> busTypeList = busOrderList.stream().map(b -> {
+            WechatAppletOrderDetailBusTypeResponseData busTypeDto = WechatAppletOrderDetailBusTypeResponseData.fromDto(BusOrderDto.fromModel(b));
+            busTypeDto.setTripTotalHour(orderInfoDto.getTripTotalHour() == null ? BigDecimal.ZERO : orderInfoDto.getTripTotalHour().setScale(0, RoundingMode.HALF_UP));
+            busTypeDto.setTripTotalKm(orderInfoDto.getTripTotalKm() == null ? BigDecimal.ZERO : orderInfoDto.getTripTotalKm().setScale(0, RoundingMode.HALF_UP));
+            busTypeDto.setQuantity(BigDecimal.valueOf(busOrderList.stream()
+                    .filter(bus -> bus.getBusTypeId().equals(b.getBusTypeId())).count()));
+            return busTypeDto;
+        }).collect(Collectors.toList());
+        responseData.setBusTypeList(busTypeList);
+
+        return responseData;
     }
 
     private List<OrderBusTypeRespDto> sumOrderBusType(@NotBlank String orderId) {

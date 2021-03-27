@@ -2,6 +2,7 @@ package com.jn.xingdaba.order.application.service;
 
 import com.jn.xingdaba.order.api.QuoteRequestData;
 import com.jn.xingdaba.order.api.QuoteResultResponseData;
+import com.jn.xingdaba.order.api.WechatAppletOrderDetailResponseData;
 import com.jn.xingdaba.order.api.WechatAppletOrderResponseData;
 import com.jn.xingdaba.order.application.dto.WechatAppletOrderRequestDto;
 import org.springframework.data.domain.Page;
@@ -12,4 +13,6 @@ public interface OrderInfoService {
     Page<WechatAppletOrderResponseData> findAll(WechatAppletOrderRequestDto requestDto);
 
     QuoteRequestData getQuoteParameter(String orderId);
+
+    WechatAppletOrderDetailResponseData getWechatDetail(String orderId);
 }

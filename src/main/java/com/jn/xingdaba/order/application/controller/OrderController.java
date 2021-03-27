@@ -2,10 +2,7 @@ package com.jn.xingdaba.order.application.controller;
 
 import com.jn.core.api.JnPageResponse;
 import com.jn.core.api.ServerResponse;
-import com.jn.xingdaba.order.api.QuoteRequestData;
-import com.jn.xingdaba.order.api.QuoteResultResponseData;
-import com.jn.xingdaba.order.api.WechatAppletOrderRequestData;
-import com.jn.xingdaba.order.api.WechatAppletOrderResponseData;
+import com.jn.xingdaba.order.api.*;
 import com.jn.xingdaba.order.application.service.OrderInfoService;
 import com.jn.xingdaba.order.application.service.QuoteService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +49,11 @@ public class OrderController {
     @GetMapping("/quote-parameters/{orderId}")
     public ServerResponse<QuoteRequestData> getQuoteParameter(@PathVariable @NotBlank String orderId) {
         return ServerResponse.success(orderInfoService.getQuoteParameter(orderId));
+    }
+
+    @GetMapping("/wechat-applet/{orderId}")
+    public ServerResponse<WechatAppletOrderDetailResponseData> getWechatDetail(@PathVariable @NotBlank String orderId) {
+        return ServerResponse.success(orderInfoService.getWechatDetail(orderId));
     }
 
 }
