@@ -217,6 +217,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         OrderInfo orderInfo = orderInfoDomainService.findById(orderId);
         orderInfo.setOrderState(OrderState.UNSUBSCRIBED.getCode());
         orderInfo.setPayState(PayState.REFUNDED.getCode());
+        orderInfoDomainService.save(orderInfo);
 
         UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage();
         unsubscribeMessage.setJnOrderId(orderId);
