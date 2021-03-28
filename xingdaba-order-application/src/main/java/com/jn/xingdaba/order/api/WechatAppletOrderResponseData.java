@@ -18,6 +18,9 @@ public final class WechatAppletOrderResponseData {
     private String orderType;
     private String orderTypeText;
 
+    private String shuttleType;
+    private String shuttleNo;
+
     /** 用车时间范围 **/
     private String useTimeRange;
 
