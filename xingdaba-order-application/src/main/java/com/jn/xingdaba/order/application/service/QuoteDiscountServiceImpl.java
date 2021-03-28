@@ -8,6 +8,7 @@ import com.jn.xingdaba.order.application.dto.QuoteResultDto;
 import com.jn.xingdaba.order.domain.service.*;
 import com.jn.xingdaba.resource.api.BusPriceResponseData;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,11 +29,11 @@ public class QuoteDiscountServiceImpl extends AbstractQuote {
                                     DayOrderDomainService dayOrderDomainService,
                                     DayWayPointDomainService dayWayPointDomainService,
                                     OrderInfoDomainService orderInfoDomainService,
-                                    ObjectMapper objectMapper) {
+                                    ObjectMapper objectMapper, AmqpTemplate amqpTemplate) {
         super(jnRestTemplate, rateCalendarDomainService,
                 baiduMapService, orderSettingsDomainService,
                 busOrderDomainService, dayOrderDomainService,
-                dayWayPointDomainService, orderInfoDomainService, objectMapper);
+                dayWayPointDomainService, orderInfoDomainService, objectMapper, amqpTemplate);
     }
 
     @Override

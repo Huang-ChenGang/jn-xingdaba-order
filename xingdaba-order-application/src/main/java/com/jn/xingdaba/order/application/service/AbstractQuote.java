@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jn.core.api.ServerResponse;
-import com.jn.xingdaba.order.api.QuoteBusTypeRequestData;
-import com.jn.xingdaba.order.api.QuoteDayRequestData;
-import com.jn.xingdaba.order.api.QuoteRequestData;
-import com.jn.xingdaba.order.api.QuoteWayPointRequestData;
+import com.jn.xingdaba.order.api.*;
 import com.jn.xingdaba.order.application.dto.QuoteResultDto;
 import com.jn.xingdaba.order.domain.model.*;
 import com.jn.xingdaba.order.domain.service.*;
@@ -17,6 +14,7 @@ import com.jn.xingdaba.order.infrastructure.exception.QuoteException;
 import com.jn.xingdaba.resource.api.BusPriceResponseData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,6 +39,7 @@ abstract class AbstractQuote implements QuoteService {
     private final DayWayPointDomainService dayWayPointDomainService;
     private final OrderInfoDomainService orderInfoDomainService;
     private final ObjectMapper objectMapper;
+    private final AmqpTemplate amqpTemplate;
 
     public AbstractQuote(@Qualifier("jnRestTemplate") RestTemplate jnRestTemplate,
                          RateCalendarDomainService rateCalendarDomainService,
@@ -50,7 +49,7 @@ abstract class AbstractQuote implements QuoteService {
                          DayOrderDomainService dayOrderDomainService,
                          DayWayPointDomainService dayWayPointDomainService,
                          OrderInfoDomainService orderInfoDomainService,
-                         ObjectMapper objectMapper) {
+                         ObjectMapper objectMapper, AmqpTemplate amqpTemplate) {
         this.jnRestTemplate = jnRestTemplate;
         this.rateCalendarDomainService = rateCalendarDomainService;
         this.baiduMapService = baiduMapService;
@@ -60,6 +59,7 @@ abstract class AbstractQuote implements QuoteService {
         this.dayWayPointDomainService = dayWayPointDomainService;
         this.orderInfoDomainService = orderInfoDomainService;
         this.objectMapper = objectMapper;
+        this.amqpTemplate = amqpTemplate;
     }
 
     /**
@@ -294,14 +294,24 @@ abstract class AbstractQuote implements QuoteService {
         orderInfo.setRelaxTotalKm(orderInfo.getTripTotalKm()
                 .add(orderInfo.getTripTotalKm().multiply(BigDecimal.valueOf(orderSettings.getRelaxTotalKmPercentage()))));
 
-        // TODO 发放满减优惠券
-//        FindCouponDto findCouponDto = new FindCouponDto();
-//        findCouponDto.setCustomerId(orderInfo.getCustomerId());
-//        findCouponDto.setOrderId(orderId);
-//        findCouponDto.setQuoteAmount(reqDmo.getQuoteAmount());
-//        amqpTemplate.convertAndSend("orderSuccess", "resource", JsonUtil.toJson(findCouponDto));
-
+        sendMinusCoupon(orderInfo);
         return orderInfoDomainService.save(orderInfo);
+    }
+
+    private void sendMinusCoupon(OrderInfo orderInfo) {
+        QuoteSuccessSendData sendData = new QuoteSuccessSendData();
+        sendData.setCustomerId(orderInfo.getCustomerId());
+        sendData.setQuoteAmount(orderInfo.getQuoteAmount());
+
+        String message;
+        try {
+            message = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(sendData);
+        } catch (JsonProcessingException e) {
+            log.error("format quote success message to json error. no message will be send.", e);
+            return;
+        }
+
+        amqpTemplate.convertAndSend("QuoteSuccess", "QuoteSuccess", message);
     }
 
     /**

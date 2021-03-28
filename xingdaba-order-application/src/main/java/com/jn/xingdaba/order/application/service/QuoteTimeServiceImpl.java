@@ -8,6 +8,7 @@ import com.jn.xingdaba.order.api.QuoteWayPointRequestData;
 import com.jn.xingdaba.order.application.dto.QuoteResultDto;
 import com.jn.xingdaba.order.domain.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +36,11 @@ public class QuoteTimeServiceImpl extends AbstractQuote {
                                 DayOrderDomainService dayOrderDomainService,
                                 DayWayPointDomainService dayWayPointDomainService,
                                 OrderInfoDomainService orderInfoDomainService,
-                                ObjectMapper objectMapper) {
+                                ObjectMapper objectMapper, AmqpTemplate amqpTemplate) {
         super(jnRestTemplate, rateCalendarDomainService,
                 baiduMapService, orderSettingsDomainService,
                 busOrderDomainService, dayOrderDomainService,
-                dayWayPointDomainService, orderInfoDomainService, objectMapper);
+                dayWayPointDomainService, orderInfoDomainService, objectMapper, amqpTemplate);
         this.baiduMapService = baiduMapService;
     }
 
