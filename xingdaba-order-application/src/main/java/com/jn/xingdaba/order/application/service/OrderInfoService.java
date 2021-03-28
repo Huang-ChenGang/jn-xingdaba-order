@@ -15,4 +15,6 @@ public interface OrderInfoService {
     QuoteRequestData getQuoteParameter(String orderId);
 
     WechatAppletOrderDetailResponseData getWechatDetail(String orderId);
+
+    void unsubscribe(String orderId);
 }

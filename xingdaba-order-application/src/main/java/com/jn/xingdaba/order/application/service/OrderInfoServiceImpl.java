@@ -10,14 +10,18 @@ import com.jn.xingdaba.order.application.dto.*;
 import com.jn.xingdaba.order.domain.model.BusOrder;
 import com.jn.xingdaba.order.domain.model.DayOrder;
 import com.jn.xingdaba.order.domain.model.DayWayPoint;
+import com.jn.xingdaba.order.domain.model.OrderInfo;
 import com.jn.xingdaba.order.domain.service.BusOrderDomainService;
 import com.jn.xingdaba.order.domain.service.DayOrderDomainService;
 import com.jn.xingdaba.order.domain.service.DayWayPointDomainService;
 import com.jn.xingdaba.order.domain.service.OrderInfoDomainService;
+import com.jn.xingdaba.order.infrastructure.dictionary.OrderState;
+import com.jn.xingdaba.order.infrastructure.dictionary.PayState;
 import com.jn.xingdaba.order.infrastructure.exception.OrderException;
 import com.jn.xingdaba.order.infrastructure.exception.OrderNotFoundException;
 import com.jn.xingdaba.resource.api.BusTypeResponseData;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jn.xingdaba.order.infrastructure.exception.OrderSystemError.GET_BUS_TYPE_ERROR;
+import static com.jn.xingdaba.order.infrastructure.exception.OrderSystemError.UNSUBSCRIBE_ERROR;
 
 @Slf4j
 @Service
@@ -45,19 +50,22 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     private final ObjectMapper objectMapper;
     private final DayOrderDomainService dayOrderDomainService;
     private final DayWayPointDomainService dayWayPointDomainService;
+    private final AmqpTemplate amqpTemplate;
 
     public OrderInfoServiceImpl(OrderInfoDomainService orderInfoDomainService,
                                 BusOrderDomainService busOrderDomainService,
                                 RestTemplate jnRestTemplate,
                                 ObjectMapper objectMapper,
                                 DayOrderDomainService dayOrderDomainService,
-                                DayWayPointDomainService dayWayPointDomainService) {
+                                DayWayPointDomainService dayWayPointDomainService,
+                                AmqpTemplate amqpTemplate) {
         this.orderInfoDomainService = orderInfoDomainService;
         this.busOrderDomainService = busOrderDomainService;
         this.jnRestTemplate = jnRestTemplate;
         this.objectMapper = objectMapper;
         this.dayOrderDomainService = dayOrderDomainService;
         this.dayWayPointDomainService = dayWayPointDomainService;
+        this.amqpTemplate = amqpTemplate;
     }
 
     @Override
@@ -202,6 +210,27 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         responseData.setBusTypeList(busTypeList);
 
         return responseData;
+    }
+
+    @Override
+    public void unsubscribe(String orderId) {
+        OrderInfo orderInfo = orderInfoDomainService.findById(orderId);
+        orderInfo.setOrderState(OrderState.UNSUBSCRIBED.getCode());
+        orderInfo.setPayState(PayState.REFUNDED.getCode());
+
+        UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage();
+        unsubscribeMessage.setJnOrderId(orderId);
+        unsubscribeMessage.setRefundAmount(orderInfo.getActualPaymentAmount());
+
+        String message;
+        try {
+            message = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(unsubscribeMessage);
+        } catch (JsonProcessingException e) {
+            log.error("format unsubscribe message to json error.", e);
+            throw new OrderException(UNSUBSCRIBE_ERROR, e);
+        }
+
+        amqpTemplate.convertAndSend("Unsubscribe", "Unsubscribe", message);
     }
 
     private List<OrderBusTypeRespDto> sumOrderBusType(@NotBlank String orderId) {

@@ -56,4 +56,10 @@ public class OrderController {
         return ServerResponse.success(orderInfoService.getWechatDetail(orderId));
     }
 
+    @PostMapping("/unsubscribe/{orderId}")
+    public ServerResponse<Void> unsubscribe(@PathVariable @NotBlank String orderId) {
+        orderInfoService.unsubscribe(orderId);
+        return ServerResponse.success();
+    }
+
 }

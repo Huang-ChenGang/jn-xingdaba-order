@@ -10,7 +10,8 @@ public enum OrderSystemError implements OrderError {
     ORDER_TYPE_ERROR(1400, "订单类型错误"),
     QUOTE_ERROR(1500, "报价异常"),
     HANDLE_PAY_SUCCESS_ERROR(1600, "处理支付成功消息异常"),
-    GET_BUS_TYPE_ERROR(1700, "获取车型信息失败")
+    GET_BUS_TYPE_ERROR(1700, "获取车型信息失败"),
+    UNSUBSCRIBE_ERROR(1800, "退订失败")
     ;
 
     private final int errorCode;
