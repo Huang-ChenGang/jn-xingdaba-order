@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public final class QuoteSuccessSendData {
+public final class QuoteSuccessMessage {
 
     private String customerId;
 

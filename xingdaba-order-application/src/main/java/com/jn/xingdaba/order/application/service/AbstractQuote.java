@@ -299,13 +299,13 @@ abstract class AbstractQuote implements QuoteService {
     }
 
     private void sendMinusCoupon(OrderInfo orderInfo) {
-        QuoteSuccessSendData sendData = new QuoteSuccessSendData();
-        sendData.setCustomerId(orderInfo.getCustomerId());
-        sendData.setQuoteAmount(orderInfo.getQuoteAmount());
+        QuoteSuccessMessage quoteSuccessMessage = new QuoteSuccessMessage();
+        quoteSuccessMessage.setCustomerId(orderInfo.getCustomerId());
+        quoteSuccessMessage.setQuoteAmount(orderInfo.getQuoteAmount());
 
         String message;
         try {
-            message = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(sendData);
+            message = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(quoteSuccessMessage);
         } catch (JsonProcessingException e) {
             log.error("format quote success message to json error. no message will be send.", e);
             return;
