@@ -1,1 +1,4 @@
 rootProject.name = 'jn-xingdaba-order'
+include 'xingdaba-order-api'
+include 'xingdaba-order-application'
+

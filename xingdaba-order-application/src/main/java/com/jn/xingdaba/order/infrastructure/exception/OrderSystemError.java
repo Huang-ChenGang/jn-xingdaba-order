@@ -1,7 +1,5 @@
 package com.jn.xingdaba.order.infrastructure.exception;
 
-import javax.persistence.criteria.Order;
-
 public enum OrderSystemError implements OrderError {
     BAD_REQUEST(400, "请求参数错误"),
     ORDER_SYSTEM_ERROR(500, "资源服务系统异常"),
