@@ -61,13 +61,13 @@ public class BusOrder {
 
     private String isDelete;
 
-    @CreatedDate
     private String createBy;
 
+    @CreatedDate
     private LocalDateTime createTime;
 
-    @LastModifiedDate
     private String updateBy;
 
+    @LastModifiedDate
     private LocalDateTime updateTime;
 }
