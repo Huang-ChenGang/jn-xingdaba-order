@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,6 +26,13 @@ public class RateCalendarDomainServiceImpl implements RateCalendarDomainService 
 
     @Override
     public void saveAll(List<RateCalendar> rateCalendarList) {
+        rateCalendarList.forEach(r -> {
+            Optional<RateCalendar> oldValue = repository.findById(r.getId());
+            if (oldValue.isPresent()) {
+                r.setCreateTime(oldValue.get().getCreateTime());
+                r.setCreateBy(oldValue.get().getCreateBy());
+            }
+        });
         repository.saveAll(rateCalendarList);
     }
 

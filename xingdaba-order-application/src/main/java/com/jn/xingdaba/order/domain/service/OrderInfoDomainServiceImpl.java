@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -43,6 +44,12 @@ public class OrderInfoDomainServiceImpl implements OrderInfoDomainService {
         }
         if (StringUtils.isEmpty(model.getIsDelete())) {
             model.setIsDelete("0");
+        }
+
+        Optional<OrderInfo> oldValue = repository.findById(model.getId());
+        if (oldValue.isPresent()) {
+            model.setCreateTime(oldValue.get().getCreateTime());
+            model.setCreateBy(oldValue.get().getCreateBy());
         }
 
         return repository.save(model).getId();
