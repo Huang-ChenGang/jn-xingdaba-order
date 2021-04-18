@@ -63,8 +63,8 @@ public final class WechatAppletOrderResponseData {
 
         responseData.setUseTimeRange(DateTimeFormatter.ofPattern("MM月dd日").format(dto.getTripBeginTime()).concat("-")
                 .concat(DateTimeFormatter.ofPattern("MM月dd日").format(dto.getTripEndTime())));
-        if (StringUtils.hasText(dto.getTripTotalTime())) {
-            responseData.setUseTimeRange(responseData.getUseTimeRange().concat("(").concat(dto.getTripTotalTime()).concat(")"));
+        if (StringUtils.hasText(dto.getSubType())) {
+            responseData.setUseTimeRange(responseData.getUseTimeRange().concat("(").concat(dto.getSubType()).concat(")"));
         }
 
         responseData.setBeginLocation(DateTimeFormatter.ofPattern("HH:mm").format(dto.getTripBeginTime()).concat(" ").concat(dto.getBeginLocation()));
