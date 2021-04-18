@@ -3,6 +3,7 @@ package com.jn.xingdaba.order.application.dto;
 import com.jn.xingdaba.order.domain.model.OrderInfo;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -55,6 +56,13 @@ public final class QuoteResultDto {
             orderInfo.setTripTotalTime((resultDto.getTotalHours()/24) + "天" + (resultDto.getTotalHours()%24) + "小时");
         } else {
             orderInfo.setTripTotalTime(resultDto.getTotalHours() + "小时");
+        }
+
+        if (StringUtils.isEmpty(orderInfo.getSubType())) {
+            orderInfo.setSubType("省内");
+            if (!resultDto.isWithinProvince()) {
+                orderInfo.setSubType("出省");
+            }
         }
 
         orderInfo.setQuoteAmount(resultDto.getQuoteAmount());

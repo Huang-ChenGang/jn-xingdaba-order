@@ -29,6 +29,8 @@ public final class QuoteRequestData {
     @NotEmpty(message = "订单类型不能为空")
     private String orderType;
 
+    private String subType;
+
     /** 接送类型 **/
     private String shuttleType;
 

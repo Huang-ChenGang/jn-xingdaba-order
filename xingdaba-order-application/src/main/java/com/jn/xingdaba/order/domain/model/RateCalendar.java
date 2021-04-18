@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public final class RateCalendar {
+public class RateCalendar {
     @Id
     private String id;
 

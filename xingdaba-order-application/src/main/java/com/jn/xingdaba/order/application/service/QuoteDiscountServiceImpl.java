@@ -44,6 +44,7 @@ public class QuoteDiscountServiceImpl extends AbstractQuote {
         QuoteDayRequestData quoteDay = requestData.getQuoteDayList().get(0);
 
         // 保存订单
+        requestData.setSubType("折扣");
         String orderId = saveOrder(requestData);
 
         // 保存订单天信息

@@ -18,6 +18,8 @@ public final class WechatAppletOrderResponseData {
     private String orderType;
     private String orderTypeText;
 
+    private String subType;
+
     private String shuttleType;
     private String shuttleNo;
 

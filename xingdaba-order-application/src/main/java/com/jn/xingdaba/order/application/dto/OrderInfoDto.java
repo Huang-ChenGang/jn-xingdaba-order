@@ -67,6 +67,8 @@ public class OrderInfoDto {
     private String orderType;
     private String orderTypeText;
 
+    private String subType;
+
     /**
      *   接送类型 订单类型为接送用车时才有
      */

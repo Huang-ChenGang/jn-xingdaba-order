@@ -68,6 +68,8 @@ public class OrderInfo {
      */
     private String orderType;
 
+    private String subType;
+
     /**
      *   接送类型 订单类型为接送用车时才有
      */

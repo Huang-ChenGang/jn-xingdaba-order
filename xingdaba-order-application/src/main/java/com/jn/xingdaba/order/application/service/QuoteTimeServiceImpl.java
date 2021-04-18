@@ -78,6 +78,11 @@ public class QuoteTimeServiceImpl extends AbstractQuote {
             }
         }
 
+        requestData.setSubType("单程");
+        if (!isOneWay) {
+            requestData.setSubType("往返");
+        }
+
         // 保存订单
         String orderId = saveOrder(requestData);
 
