@@ -6,7 +6,7 @@ import com.jn.xingdaba.order.api.RateCalendarSaveRequestData;
 import java.util.List;
 
 public interface RateCalendarService {
-    int MONTH_COUNT = 2;
+    int MONTH_COUNT = 3;
     String[] WEEK_ARR = new String[]{"日", "一", "二", "三", "四", "五", "六"};
 
     List<RateCalendarMonthResponseData> init();

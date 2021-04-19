@@ -35,12 +35,15 @@ public class RateCalendarServiceImpl implements RateCalendarService {
 
         // 获取当前年份和月份
         LocalDate currentDate = LocalDate.now();
-        LocalDate firstday = currentDate.with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate lastDay = currentDate.plusMonths(MONTH_COUNT).with(TemporalAdjusters.lastDayOfMonth());
-        List<RateCalendar> allRateCalender = domainService.findByUseDateBetween(firstday, lastDay);
+        LocalDate firstDay = currentDate.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDay = currentDate.plusMonths(MONTH_COUNT-1).with(TemporalAdjusters.lastDayOfMonth());
+        List<RateCalendar> allRateCalender = domainService.findByUseDateBetween(firstDay, lastDay);
 
         for (int monthIdx = 0; monthIdx < MONTH_COUNT; monthIdx++) {
-            currentDate = currentDate.plusMonths(monthIdx);
+            if (monthIdx != 0) {
+                currentDate = currentDate.plusMonths(1);
+            }
+
             int currentYear = currentDate.getYear();
             int currentMonth = currentDate.getMonthValue();
 
