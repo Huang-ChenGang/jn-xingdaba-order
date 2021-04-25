@@ -23,6 +23,8 @@ public final class WechatAppletOrderResponseData {
     private String shuttleType;
     private String shuttleNo;
 
+    private String discountBusId;
+
     /** 用车时间范围 **/
     private String useTimeRange;
 

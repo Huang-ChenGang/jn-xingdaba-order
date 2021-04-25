@@ -37,6 +37,8 @@ public final class QuoteRequestData {
     /** 接送班次号 **/
     private String shuttleNo;
 
+    private String discountBusId;
+
     /** 乘车人数 **/
     private Integer personNum;
 

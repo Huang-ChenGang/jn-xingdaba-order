@@ -80,6 +80,8 @@ public class OrderInfo {
      */
     private String shuttleNo;
 
+    private String discountBusId;
+
     /**
      *   是否出省 0:否 1:是
      */
