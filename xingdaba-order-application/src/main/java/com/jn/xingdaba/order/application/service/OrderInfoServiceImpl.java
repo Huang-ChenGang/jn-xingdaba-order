@@ -234,6 +234,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         amqpTemplate.convertAndSend("Unsubscribe", "Unsubscribe", message);
     }
 
+    @Override
+    public Page<OrderInfoDto> findAll(OrderRequestData requestData) {
+        log.info("find pageable order list for request data: {}", requestData);
+        Pageable pageable = PageRequest.of(requestData.getPageNo(), requestData.getPageSize());
+        return orderInfoDomainService.findAll(requestData, pageable)
+                .map(OrderInfoDto::fromModel);
+    }
+
     private List<OrderBusTypeRespDto> sumOrderBusType(@NotBlank String orderId) {
         List<BusOrder> busList = busOrderDomainService.findByOrderId(orderId);
 

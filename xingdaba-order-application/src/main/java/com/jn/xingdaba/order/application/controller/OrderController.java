@@ -38,6 +38,15 @@ public class OrderController {
         return ServerResponse.success(orderInfoService.findQuoteResult(orderId));
     }
 
+    @GetMapping("/pageable")
+    public ServerResponse<JnPageResponse<OrderResponseData>> findAll(@NotNull @Validated OrderRequestData requestData) {
+        log.info("find pageable order list for request data: {}", requestData);
+        Page<OrderResponseData> pageableResponse = orderInfoService.findAll(requestData)
+                .map(OrderResponseData::fromDto);
+        log.info("find pageable order list: {}", pageableResponse);
+        return ServerResponse.success(JnPageResponse.of(pageableResponse));
+    }
+
     @GetMapping("/wechat-applet/pageable")
     public ServerResponse<JnPageResponse<WechatAppletOrderResponseData>> findAll(@NotNull @Validated WechatAppletOrderRequestData requestData) {
         log.info("find pageable wechat applet order list for request data: {}", requestData);

@@ -1,5 +1,6 @@
 package com.jn.xingdaba.order.domain.service;
 
+import com.jn.xingdaba.order.api.OrderRequestData;
 import com.jn.xingdaba.order.application.dto.WechatAppletOrderRequestDto;
 import com.jn.xingdaba.order.domain.model.OrderInfo;
 import org.springframework.data.domain.Page;
@@ -13,4 +14,6 @@ public interface OrderInfoDomainService {
     OrderInfo findById(String id);
 
     Page<OrderInfo> findAll(WechatAppletOrderRequestDto requestDto, Pageable pageable);
+
+    Page<OrderInfo> findAll(OrderRequestData requestData, Pageable pageable);
 }
