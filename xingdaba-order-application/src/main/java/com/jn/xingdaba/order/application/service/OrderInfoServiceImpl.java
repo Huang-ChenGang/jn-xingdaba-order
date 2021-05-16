@@ -242,9 +242,17 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 .map(OrderInfoDto::fromModel)
                 .map(dto -> {
                     dto.setWayPoints("途径：".concat(getWayPoints(dto.getId())));
+                    dto.setBusTypes(getBusTypes(dto.getId()));
                     return dto;
                 })
                 ;
+    }
+
+    private String getBusTypes(String orderId) {
+        return sumOrderBusType(orderId).stream()
+                .map(b -> b.getBusTypeName().concat("*")
+                .concat(b.getQuantity().stripTrailingZeros().toPlainString()))
+                .collect(Collectors.joining(" "));
     }
 
     private String getWayPoints(String orderId) {

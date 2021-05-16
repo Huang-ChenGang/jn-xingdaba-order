@@ -45,6 +45,8 @@ public final class OrderResponseData {
 
     private String wayPoints;
 
+    private String busTypes;
+
     /**
      *   订单状态
      */
