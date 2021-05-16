@@ -239,7 +239,20 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         log.info("find pageable order list for request data: {}", requestData);
         Pageable pageable = PageRequest.of(requestData.getPageNo(), requestData.getPageSize());
         return orderInfoDomainService.findAll(requestData, pageable)
-                .map(OrderInfoDto::fromModel);
+                .map(OrderInfoDto::fromModel)
+                .map(dto -> {
+                    dto.setWayPoints("途径：".concat(getWayPoints(dto.getId())));
+                    return dto;
+                })
+                ;
+    }
+
+    private String getWayPoints(String orderId) {
+        return dayOrderDomainService.findByOrderId(orderId).stream()
+                .map(dayOrder -> dayWayPointDomainService.findByDayOrderId(dayOrder.getId())
+                        .stream().map(DayWayPoint::getPointName)
+                        .collect(Collectors.joining(" → ")))
+                .collect(Collectors.joining(" → "));
     }
 
     private List<OrderBusTypeRespDto> sumOrderBusType(@NotBlank String orderId) {

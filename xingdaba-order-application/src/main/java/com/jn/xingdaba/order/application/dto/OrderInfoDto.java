@@ -61,6 +61,8 @@ public class OrderInfoDto {
      */
     private String endLocation;
 
+    private String wayPoints;
+
     /**
      *   订单类型 时段用车、多日用车等
      */

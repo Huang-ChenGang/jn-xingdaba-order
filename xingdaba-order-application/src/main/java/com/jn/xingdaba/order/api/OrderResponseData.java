@@ -43,6 +43,8 @@ public final class OrderResponseData {
 
     private String tripTotalTime;
 
+    private String wayPoints;
+
     /**
      *   订单状态
      */
