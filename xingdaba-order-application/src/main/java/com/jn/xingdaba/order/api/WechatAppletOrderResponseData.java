@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
@@ -57,6 +58,8 @@ public final class WechatAppletOrderResponseData {
     /** 司机电话 */
     private String driverPhone;
 
+    private Boolean canUnsubscribe;
+
     private String isDelete;
 
     public static WechatAppletOrderResponseData fromDto(OrderInfoDto dto) {
@@ -72,6 +75,7 @@ public final class WechatAppletOrderResponseData {
         responseData.setBeginLocation(DateTimeFormatter.ofPattern("HH:mm").format(dto.getTripBeginTime()).concat(" ").concat(dto.getBeginLocation()));
         responseData.setEndLocation(DateTimeFormatter.ofPattern("HH:mm").format(dto.getTripEndTime()).concat(" ").concat(dto.getEndLocation()));
         responseData.setWeChatMiniState(WechatAppletOrderState.fromOrderState(dto.getOrderState()).getCode());
+        responseData.setCanUnsubscribe(LocalDateTime.now().isBefore(dto.getTripBeginTime().minusHours(24L)));
 
         return responseData;
     }
