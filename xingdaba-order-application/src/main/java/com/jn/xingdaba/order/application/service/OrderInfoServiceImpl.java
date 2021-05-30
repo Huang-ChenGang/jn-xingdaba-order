@@ -16,6 +16,7 @@ import com.jn.xingdaba.order.domain.service.DayOrderDomainService;
 import com.jn.xingdaba.order.domain.service.DayWayPointDomainService;
 import com.jn.xingdaba.order.domain.service.OrderInfoDomainService;
 import com.jn.xingdaba.order.infrastructure.dictionary.OrderState;
+import com.jn.xingdaba.order.infrastructure.dictionary.OrderType;
 import com.jn.xingdaba.order.infrastructure.dictionary.PayState;
 import com.jn.xingdaba.order.infrastructure.exception.OrderException;
 import com.jn.xingdaba.order.infrastructure.exception.OrderNotFoundException;
@@ -246,6 +247,22 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                     return dto;
                 })
                 ;
+    }
+
+    @Override
+    public UserOrderMessage getOrderMessage(String orderId) {
+        UserOrderMessage message = new UserOrderMessage();
+        OrderInfoDto dto = OrderInfoDto.fromModel(orderInfoDomainService.findById(orderId));
+        BeanUtils.copyProperties(dto, message);
+
+        List<OrderBusTypeRespDto> sumOrderBusType = sumOrderBusType(orderId);
+        String busType = sumOrderBusType.stream().map(b -> b.getBusTypeName().concat("*")
+                .concat(b.getQuantity().stripTrailingZeros().toPlainString()))
+                .collect(Collectors.joining(" "));
+
+        message.setOrderType(OrderType.findByCode(dto.getOrderType()).getValue().concat(" ").concat(busType));
+
+        return message;
     }
 
     private String getBusTypes(String orderId) {

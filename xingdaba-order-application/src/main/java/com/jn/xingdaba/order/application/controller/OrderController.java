@@ -71,4 +71,9 @@ public class OrderController {
         return ServerResponse.success();
     }
 
+    @GetMapping("/order-message/{orderId}")
+    public ServerResponse<UserOrderMessage> getOrderMessage(@PathVariable String orderId) {
+        log.info("get order message for orderId: {}", orderId);
+        return ServerResponse.success(orderInfoService.getOrderMessage(orderId));
+    }
 }

@@ -17,4 +17,6 @@ public interface OrderInfoService {
     void unsubscribe(String orderId);
 
     Page<OrderInfoDto> findAll(OrderRequestData requestData);
+
+    UserOrderMessage getOrderMessage(String orderId);
 }
