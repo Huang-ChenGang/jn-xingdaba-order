@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -45,6 +46,30 @@ public class OrderController {
                 .map(OrderResponseData::fromDto);
         log.info("find pageable order list: {}", pageableResponse);
         return ServerResponse.success(JnPageResponse.of(pageableResponse));
+    }
+
+    @GetMapping("/{orderId}")
+    public ServerResponse<OrderDetailResponseData> getDetail(@PathVariable @NotBlank String orderId) {
+        log.info("find order detail for orderId: {}", orderId);
+        return ServerResponse.success(OrderDetailResponseData.fromDto(orderInfoService.getDetail(orderId)));
+    }
+
+    @GetMapping("/trip-list/{orderId}")
+    public ServerResponse<List<OrderDetailTripResponseData>> getDetailTripList(@PathVariable @NotBlank String orderId) {
+        log.info("find order detail trip list for orderId: {}", orderId);
+        return ServerResponse.success(orderInfoService.getDetailTripList(orderId));
+    }
+
+    @GetMapping("/bus-info-list/{orderId}")
+    public ServerResponse<List<OrderDetailBusInfoResponseData>> getDetailBusInfoList(@PathVariable @NotBlank String orderId) {
+        log.info("find order detail bus info list for orderId: {}", orderId);
+        return ServerResponse.success(orderInfoService.getDetailBusInfoList(orderId));
+    }
+
+    @GetMapping("/bus-cost-list/{orderId}")
+    public ServerResponse<List<OrderDetailBusCostResponseData>> getDetailBusCostList(@PathVariable @NotBlank String orderId) {
+        log.info("find order detail bus cost list for orderId: {}", orderId);
+        return ServerResponse.success(orderInfoService.getDetailBusCostList(orderId));
     }
 
     @GetMapping("/wechat-applet/pageable")

@@ -28,12 +28,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -247,6 +250,68 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                     return dto;
                 })
                 ;
+    }
+
+    @Override
+    public OrderInfoDto getDetail(String orderId) {
+        return OrderInfoDto.fromModel(orderInfoDomainService.findById(orderId));
+    }
+
+    @Override
+    public List<OrderDetailTripResponseData> getDetailTripList(String orderId) {
+        List<OrderDetailTripResponseData> tripList = new ArrayList<>();
+
+        List<DayOrder> dayOrderList = dayOrderDomainService.findByOrderId(orderId);
+        if (!CollectionUtils.isEmpty(dayOrderList)) {
+            LocalDateTime tripBeginTime = dayOrderList.get(0).getBeginTime();
+            LocalDateTime tripEndTime = dayOrderList.get(0).getEndTime();
+            long actualHr = Duration.between(tripBeginTime, tripEndTime).toHours();
+            long relaxHr = actualHr + 1;
+
+            Stream.iterate(0, d -> d + 1).limit(dayOrderList.size()).forEach(d -> {
+                DayOrder dayOrder = dayOrderList.get(d);
+
+                List<DayWayPoint> wayPointList = dayWayPointDomainService.findByDayOrderId(dayOrder.getId());
+
+                Stream.iterate(0, i -> i + 1).limit(wayPointList.size()).forEach( i -> {
+                    OrderDetailTripResponseData tripInfo = new OrderDetailTripResponseData();
+                    DayWayPoint wayPoint = wayPointList.get(i);
+                    String passNight = "";
+
+                    if (d == 0 && i ==0) {
+                        tripInfo.setActualHr(actualHr);
+                        tripInfo.setRelaxHr(relaxHr);
+                    }
+
+                    // 日期、时间展示
+                    if (i == 0) {
+                        tripInfo.setTripDate(dayOrder.getBeginTime());
+                        tripInfo.setTripTime(dayOrder.getBeginTime());
+                    } else if (i == wayPointList.size() - 1) {
+                        tripInfo.setTripTime(dayOrder.getEndTime());
+                        passNight = "1".equals(dayOrder.getIsPassNight()) ? "(过夜)" : "(不过夜)";
+                    }
+
+                    tripInfo.setPointName(wayPoint.getPointName() + passNight);
+                    tripInfo.setPointAddress(wayPoint.getPointAddress());
+                    tripList.add(tripInfo);
+                });
+            });
+        }
+
+        return tripList;
+    }
+
+    @Override
+    public List<OrderDetailBusInfoResponseData> getDetailBusInfoList(String orderId) {
+        List<BusOrder> busOrderList = busOrderDomainService.findByOrderId(orderId);
+        return busOrderList.stream().map(OrderDetailBusInfoResponseData::fromModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDetailBusCostResponseData> getDetailBusCostList(String orderId) {
+        List<BusOrder> busOrderList = busOrderDomainService.findByOrderId(orderId);
+        return busOrderList.stream().map(OrderDetailBusCostResponseData::fromModel).collect(Collectors.toList());
     }
 
     @Override

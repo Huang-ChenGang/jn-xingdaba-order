@@ -254,6 +254,8 @@ public class OrderInfoDto {
 
     private String isDelete;
 
+    private LocalDateTime createTime;
+
     public static OrderInfoDto fromModel(OrderInfo model) {
         OrderInfoDto dto = new OrderInfoDto();
         BeanUtils.copyProperties(model, dto);
